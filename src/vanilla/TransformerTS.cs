@@ -66,6 +66,8 @@ namespace AutoRest.TypeScript
 
         private void ConvertDateTimeToString(CodeModelTS codeModel)
         {
+            var visited = new HashSet<string>();
+
             void addDocumentation(IVariable variable)
             {
                 if (variable.ModelType is PrimaryType pt && pt.KnownPrimaryType == KnownPrimaryType.DateTime)
@@ -86,8 +88,10 @@ namespace AutoRest.TypeScript
                 {
                     foreach (var property in composite.Properties)
                     {
-                        addDocumentation(property);
-                        convertModel(property.ModelType);
+                        if (visited.Add(property.ModelType.Name)) {
+                            addDocumentation(property);
+                            convertModel(property.ModelType);
+                        }
                     }
                 }
                 else if (modelType is PrimaryType pt &&
